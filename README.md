@@ -24,6 +24,7 @@ Template to create new Code Ocean Capsules for NIDAP <!-- TODO replace this with
 
 1. On GitHub, open a Pull Request to merge the `dev` branch into `main`.
 1. Ensure you have addressed all TODO comments in the repo, and delete the comments once complete.
+1. If the `init` workflow ran successfully, delete the workflow file: `.github/workflows/init.yml`.
 1. Delete these template instructions from the README (everything between the `start-template` and `end-template` comments).
 1. Review the PR and merge it if everything looks correct and the CI checks succeed.
 

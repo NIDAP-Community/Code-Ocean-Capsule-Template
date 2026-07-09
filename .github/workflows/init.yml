@@ -1,16 +1,25 @@
 name: init
 
+# TODO: delete this workflow file after you run it successfully
+
 on:
   workflow_dispatch:
     inputs:
+      syncweaver_init:
+        required: true
+        default: true
+        type: boolean
+        description: "Whether to initialize syncweaver in this repository. Check this box if you plan to depend on any CCBR-maintained dependencies, such as OMIX modules or R packages."
       source_repo:
         required: false
         default: ""
-        description: "[optional] source repository to include as a dependency, e.g. CCBR/MOSuite, NIDAP-Community/SCWorkflow"
+        type: string
+        description: "[optional] Source repository to include as a dependency via syncweaver, e.g. CCBR/MOSuite, NIDAP-Community/SCWorkflow"
       source_repo_subdir:
         required: false
         default: ""
-        description: "[optional] subdirectory within the source repository to include, e.g. modules/heatmap from OMIX"
+        type: string
+        description: "[optional] Subdirectory within the source repository to include via syncweaver, e.g. modules/heatmap from OMIX"
 env:
   template_repo: NIDAP-Community/Code-Ocean-Capsule-Template
 
@@ -47,6 +56,17 @@ jobs:
       - uses: actions/checkout@v7
         with:
           token: ${{ steps.ccbr_bot.outputs.token }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Install syncweaver
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "git+https://github.com/CCBR/syncweaver.git@main"
 
       - name: git config
         shell: bash
@@ -139,7 +159,41 @@ jobs:
           git add .github/CODEOWNERS
           git commit -m "chore: create CODEOWNERS" || echo "No CODEOWNERS changes to commit"
 
+      - name: syncweaver init
+        if: ${{ inputs.syncweaver_init == 'true' }}
+        run: |
+          syncweaver init host
+          git add .
+          git commit -m 'chore(syncweaver): initialize syncweaver' || echo "No `syncweaver init` changes to commit"
+
+      - name: syncweaver add source repo
+        if: ${{ inputs.syncweaver_init == 'true' && inputs.source_repo != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          source_repo='${{ inputs.source_repo }}'
+          source_subdir='${{ inputs.source_repo_subdir }}'
+
+          repo_name="${source_repo##*/}"
+          repo_name="${repo_name%.git}"
+
+          if [[ -n "$source_subdir" ]]; then
+            dest_name="${source_subdir##*/}"
+            syncweaver add \
+              --repo-url "$source_repo" \
+              --remote-subdir "$source_subdir" \
+              --path "code/$dest_name"
+          else
+            syncweaver add \
+              --repo-url "$source_repo" \
+              --path "code/$repo_name"
+          fi
+
+          git add .
+          git commit -m "chore(syncweaver): add source $source_repo" || echo "No `syncweaver add` changes to commit"
+
       - name: git push
         shell: bash
         run: |
-          git push
+          git push || echo "No changes to push"
