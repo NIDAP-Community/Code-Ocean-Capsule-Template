@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "named_parameters": true,
+  "general": {
+    "title": "Code-Ocean-Capsule-Template",
+    "instructions": "Configure template output paths for the run summary file."
+  },
+  "datasets": [],
+  "categories": [
+    {
+      "id": "basicOutputConfig",
+      "name": "Basic",
+      "description": "Core output settings",
+      "icon": "folder"
+    }
+  ],
+  "parameters": [
+    {
+      "id": "templateOutputSubdir",
+      "category": "basicOutputConfig",
+      "name": "Output Subdirectory",
+      "param_name": "output_subdir",
+      "description": "Subdirectory under results/ where summary output is written",
+      "type": "text",
+      "value_type": "string",
+      "default_value": "output"
+    },
+    {
+      "id": "templateSummaryFilename",
+      "category": "basicOutputConfig",
+      "name": "Summary Filename",
+      "param_name": "summary_filename",
+      "description": "Filename for the generated run summary",
+      "type": "text",
+      "value_type": "string",
+      "default_value": "run-summary.txt"
+    }
+  ],
+  "results": [
+    {
+      "file_name": "output/run-summary.txt"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+name: init
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_repo:
+        required: false
+        default: ""
+        description: "[optional] source repository to include as a dependency, e.g. CCBR/MOSuite, NIDAP-Community/SCWorkflow"
+      source_repo_subdir:
+        required: false
+        default: ""
+        description: "[optional] subdirectory within the source repository to include, e.g. modules/heatmap from OMIX"
+env:
+  template_repo: NIDAP-Community/Code-Ocean-Capsule-Template
+
+permissions:
+  contents: read
+
+jobs:
+  init-repository:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate CCBR-bot app configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${{ vars.CCBR_BOT_APP_ID }}" ]]; then
+            echo "Error: vars.CCBR_BOT_APP_ID is required to generate a token." >&2
+            exit 1
+          fi
+          if [[ -z "${{ secrets.CCBR_BOT_PRIVATE_KEY }}" ]]; then
+            echo "Error: secrets.CCBR_BOT_PRIVATE_KEY is required to generate a token." >&2
+            exit 1
+          fi
+      - name: Generate CCBR-bot token
+        id: ccbr_bot
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.CCBR_BOT_APP_ID }}
+          private-key: ${{ secrets.CCBR_BOT_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+
+      - uses: actions/checkout@v7
+        with:
+          token: ${{ steps.ccbr_bot.outputs.token }}
+
+      - name: git config
+        shell: bash
+        run: |
+          git config user.name "CCBR-bot"
+          git config user.email "258092125+ccbr-bot@users.noreply.github.com"
+
+      - name: Resolve repository inputs
+        id: repos
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TEMPLATE_REPO="${{ env.template_repo }}"
+          TARGET_REPO="${{ github.repository }}"
+          TARGET_OWNER="${TARGET_REPO%%/*}"
+          TARGET_NAME="${TARGET_REPO#*/}"
+
+          if [[ -z "$TARGET_OWNER" || -z "$TARGET_NAME" || "$TARGET_OWNER" == "$TARGET_NAME" ]]; then
+            echo "Error: target repository must be in OWNER/REPO format." >&2
+            exit 1
+          fi
+
+          echo "template_repo=$TEMPLATE_REPO" >> "$GITHUB_OUTPUT"
+          echo "target_repo=$TARGET_REPO" >> "$GITHUB_OUTPUT"
+          echo "target_owner=$TARGET_OWNER" >> "$GITHUB_OUTPUT"
+          echo "target_name=$TARGET_NAME" >> "$GITHUB_OUTPUT"
+
+          echo "Template repo: $TEMPLATE_REPO"
+          echo "Target repo: $TARGET_REPO"
+
+      - name: Set repository settings
+        env:
+          GH_TOKEN: ${{ steps.ccbr_bot.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh api -X PATCH "repos/${{ steps.repos.outputs.target_repo }}" \
+            -f allow_update_branch=true \
+            -f allow_auto_merge=true \
+            -f delete_branch_on_merge=true
+
+          echo "Repository settings updated on ${{ steps.repos.outputs.target_repo }}"
+
+      - name: Copy ruleset named default from template repo
+        env:
+          GH_TOKEN: ${{ steps.ccbr_bot.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          TEMPLATE_REPO="${{ steps.repos.outputs.template_repo }}"
+          TARGET_REPO="${{ steps.repos.outputs.target_repo }}"
+
+          SOURCE_RULESET_JSON="$(gh api "repos/$TEMPLATE_REPO/rulesets" --jq '.[] | select(.name == "default")' || true)"
+
+          if [[ -z "$SOURCE_RULESET_JSON" ]]; then
+            echo "No ruleset named 'default' found in $TEMPLATE_REPO"
+            exit 1
+          fi
+
+          EXISTING_ID="$(gh api "repos/$TARGET_REPO/rulesets" --jq '.[] | select(.name == "default") | .id' | head -n 1 || true)"
+          if [[ -n "$EXISTING_ID" ]]; then
+            gh api -X DELETE "repos/$TARGET_REPO/rulesets/$EXISTING_ID"
+            echo "Deleted existing default ruleset ($EXISTING_ID) in $TARGET_REPO"
+          fi
+
+          PAYLOAD_FILE="$(mktemp)"
+          jq '{name, target, enforcement, bypass_actors, conditions, rules}' <<< "$SOURCE_RULESET_JSON" > "$PAYLOAD_FILE"
+
+          gh api -X POST "repos/$TARGET_REPO/rulesets" --input "$PAYLOAD_FILE"
+          rm -f "$PAYLOAD_FILE"
+
+          echo "Copied default ruleset from $TEMPLATE_REPO to $TARGET_REPO"
+
+      - name: Create CODEOWNERS file
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          codeowner="${{ github.triggering_actor }}"
+          if [[ -z "$codeowner" ]]; then
+            codeowner="${{ github.actor }}"
+          fi
+
+          mkdir -p .github
+          printf '* @%s\n' "$codeowner" > .github/CODEOWNERS
+
+          git add .github/CODEOWNERS
+          git commit -m "chore: create CODEOWNERS" || echo "No CODEOWNERS changes to commit"
+
+      - name: git push
+        shell: bash
+        run: |
+          git push
