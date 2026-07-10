@@ -32,3 +32,13 @@ jobs:
 
       - name: Format R code with air
         uses: rstudio/shiny-workflows/format-r-code@v1
+
+      - name: Format Python code with ruff
+        uses: astral-sh/ruff-action@v4.0.0
+      - run: ruff check --fix
+      - run: ruff format
+
+      - name: git commit & push
+        run: |
+          git add . && git commit -m "ci: 🤖 auto-format" || echo "nothing to commit"
+          git push || echo "nothing to push"
