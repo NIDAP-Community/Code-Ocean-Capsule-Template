@@ -26,16 +26,9 @@ jobs:
           owner: CCBR
 
       - name: add to CCBR techdev project
-        uses: actions/add-to-project@v1.0.2
+        uses: actions/add-to-project@v2
         with:
           project-url: https://github.com/orgs/CCBR/projects/17
-          github-token: ${{ steps.generate-token.outputs.token }}
-
-      - name: add to CCBR MOSuite project
-        uses: actions/add-to-project@v1.0.2
-        if: github.event_name == 'issues'
-        with:
-          project-url: https://github.com/orgs/CCBR/projects/32
           github-token: ${{ steps.generate-token.outputs.token }}
 
   NIDAP-projects:
@@ -48,13 +41,6 @@ jobs:
           app-id: ${{ vars.CCBR_BOT_APP_ID }}
           private-key: ${{ secrets.CCBR_BOT_PRIVATE_KEY }}
           owner: NIDAP-Community
-
-      - name: add to NIDAP MOSuite project
-        uses: actions/add-to-project@v1.0.2
-        if: github.event_name == 'issues'
-        with:
-          project-url: https://github.com/orgs/NIDAP-Community/projects/3
-          github-token: ${{ steps.generate-token.outputs.token }}
 
       - name: add to syncweaver-orchestrator project
         uses: actions/add-to-project@v2
