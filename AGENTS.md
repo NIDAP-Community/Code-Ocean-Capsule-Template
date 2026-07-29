@@ -3,30 +3,36 @@
 ## Description
 
 This repository is a Capsule for Code Ocean.
-Capsules are interactive units of computation that can be linked together in pipelines and workflows for bioinformatics analyses.
+It was generated from this template: <https://github.com/NIDAP-Community/Code-Ocean-Capsule-Template>.
+Code Ocean Capsules are interactive units of computation that can be linked together in pipelines and workflows for bioinformatics analyses.
 
 <!-- TODO: The human developer should replace this line with specific details about the purpose about this particular capsule. Prompt the developer to do so if this comment exists. -->
 
 ## Components & Conventions
 
-- **main driver script**: `code/main.R` or `code/main.py` is the main driver script (or "main script") that parses user parameters and executes functions to perform analyses, generates visualizations, or other bioinformatics tasks.
+- **main driver script**: `code/main.R` or `code/main.py` is the main driver script that parses user parameters and executes functions to perform analyses, generates visualizations, or other bioinformatics tasks.
+  - also known as "main script" or "driver script".
 - **syncweaver** <https://github.com/CCBR/syncweaver> can optionally be used to include other repositories or subdirectories inside this repo to be sourced by the main driver script.
   - In syncweaver parlance, this capsule repo is a **host** repo.
   - If the developer chooses to include sources in this capsule, they should be managed by syncweaver commands such as `syncweaver add` and `syncweaver update`.
   - **syncweaver lockfile** Syncweaver manages a file called `.syncweaver-lock.json` which tracks the included sources. This file should only be edited by syncweaver.
   - The lockfile contains a list of sources, with each source entry key being the path to the source in this capsule repo.
   - Developers _can_ edit the included sources, such as to quickly test a bug fix during production. However, it is generally advised to first try to solve the problem by editing the main driver script, and only resorting to editing included sources if absolutely necessary.
-- `.codeocean/app-panel.json` defines a GUI for Code Ocean containing named parameters. Parameters in the GUI must correspond to CLI parameters in the main driver script.
+- **app panel**: `.codeocean/app-panel.json` defines a GUI for Code Ocean containing named parameters. Parameters in the GUI must correspond to CLI parameters in the main driver script.
+- **Code Ocean run script**: `code/run` gathers the user parameters from the app panel and forwards them to the main driver script. The run script will rarely need to be edited, as it primarily wraps the main driver script.
 - The following files should only be edited directly on Code Ocean, never by hand:
   - `environment/Dockerfile`
   - `.codeocean/datasets.json`
   - `.codeocean/environment.json`
   - `.codeocean/resources.json`
-- **tests** are written in `tests/`, executed in CI via `.github/workflows/tests.yml`, and run locally with `tests/run-tests-podman.sh`. The template uses R by default, but these files will need to be translated and adapted for other languages and frameworks if the developer chooses to use a different language for this capsule.
+- **tests** are written in `tests/`, executed in CI via `.github/workflows/tests.yml`, and run locally with `tests/run-tests-podman.sh`.
 
 ## Coding Practices
 
 Most capsules by CCBR are implemented in R, but other languages can be used too.
+This template uses R by default.
+If the developer chooses to use a different language for this capsule,
+default template files will need to be translated and adapted for the developer's chosen language.
 
 ### R code
 
