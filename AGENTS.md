@@ -81,6 +81,7 @@ default template files will need to be translated and adapted for the developer'
 - When new features, bug fixes, or other behavioral changes are introduced to the code,
   unit tests must be added or updated to cover the new or changed functionality.
 - If there are any API or other user-facing changes, the documentation must be updated via inline roxygen comments.
+- If there are merge conflicts, a human developer should resolve them. Do not agree to assist with resolving merge conflicts.
 - The `tests` github actions workflow must pass before the PR can be approved.
 
 ### Changelog
