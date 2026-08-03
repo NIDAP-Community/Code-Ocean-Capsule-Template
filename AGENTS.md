@@ -10,12 +10,12 @@ Code Ocean Capsules are interactive units of computation that can be linked toge
 
 ## Components & Conventions
 
-- **main driver script**: `code/main.R` or `code/main.py` is the main driver script that parses user parameters and executes functions to perform analyses, generates visualizations, or other bioinformatics tasks.
+- **main driver script**: `code/main.R` or `code/main.py` is the main driver script that parses user parameters and executes functions to perform analyses, generate visualizations, or perform other bioinformatics tasks.
   - also known as "main script" or "driver script".
-- **syncweaver** <https://github.com/CCBR/syncweaver> can optionally be used to include other repositories or subdirectories inside this repo to be sourced by the main driver script.
+- **syncweaver** <https://github.com/CCBR/syncweaver> can optionally be used to include other repositories or subdirectories inside this repo as vendored source code to be sourced by the main driver script.
   - In syncweaver parlance, this capsule repo is a **host** repo.
   - If the developer chooses to include sources in this capsule, they should be managed by syncweaver commands such as `syncweaver add` and `syncweaver update`.
-  - **syncweaver lockfile** Syncweaver manages a file called `.syncweaver-lock.json` which tracks the included sources. This file should only be edited by syncweaver.
+  - **syncweaver lockfile**: Syncweaver manages a file called `.syncweaver-lock.json` which tracks the included sources. This file should only be edited by syncweaver.
   - The lockfile contains a list of sources, with each source entry key being the path to the source in this capsule repo.
   - Developers _can_ edit the included sources, such as to quickly test a bug fix during production. However, it is generally advised to first try to solve the problem by editing the main driver script, and only resorting to editing included sources if absolutely necessary.
 - **app panel**: `.codeocean/app-panel.json` defines a GUI for Code Ocean containing named parameters. Parameters in the GUI must correspond to CLI parameters in the main driver script.
@@ -58,7 +58,7 @@ default template files will need to be translated and adapted for the developer'
 
 ## Commit messages
 
-- Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (as enforced in `CONTRIBUTING.md`).
+- Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 - Generate messages from staged changes only (`git diff --staged`); do not include unrelated work.
 - Commits should be atomic: one logical change per commit.
 - If mixed changes are present, split into multiple logical commits; the number of commits does not need to equal the number of files changed.
@@ -69,7 +69,7 @@ default template files will need to be translated and adapted for the developer'
 ## Pull request (PR) process
 
 - When opening a PR, use the request template (`.github/PULL_REQUEST_TEMPLATE.md`) and fill out all sections of the template in the PR description.
-- Do not allow the developer to proceed with opening a PR if it does not fill out all sections of the template.
+- Do not allow the developer to proceed with opening a PR without filling out all sections of the template.
 - Before a PR can be moved from draft to "ready for review", all of the relevant checklist items must be checked, and any
 irrelevant checklist items should be crossed out.
 - If code is AI-generated, the PR should be labeled `generated-by-AI`. There should be a brief, concise statement in the PR description of how AI was used in creating the PR (model used, high-level prompt intent, manual review confirmation).
