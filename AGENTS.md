@@ -70,6 +70,7 @@ default template files will need to be translated and adapted for the developer'
 
 ## Pull request (PR) process
 
+- PR titles must follow Conventional Commits format (see "Commit messages" section).
 - When opening a PR, use the request template (`.github/PULL_REQUEST_TEMPLATE.md`) and fill out all sections of the template in the PR description.
 - Do not allow the developer to proceed with opening a PR without filling out all sections of the template.
 - Before a PR can be moved from draft to "ready for review", all of the relevant checklist items under "PR Checklist" must be checked,
