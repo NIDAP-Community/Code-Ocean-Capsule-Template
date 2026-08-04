@@ -20,7 +20,7 @@ when referring to the issue so it will be closed automatically when the PR is me
 <!--
 Include a brief description of how AI assistance was used to generate any of the code or content included in this PR,
 e.g. writing code, writing unit tests, troubleshooting problems, software design discussion, commit messages, or preparing the PR.
-Disclose the model version used, e.g. Claude Sonnet 5, GPT-5.6 Sol, etc.
+Disclose the tool and model version used, e.g. Claude Code w/ Claude Sonnet 5, Codex w/ GPT-5.6 Sol, Copilot w/ GPT-5.6 Terra, etc.
 
 If generative AI tools were not used in any way whatsoever, uncomment the following line:
 _No generative AI tools were used_
