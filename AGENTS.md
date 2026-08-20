@@ -19,6 +19,7 @@ Code Ocean Capsules are interactive units of computation that can be linked toge
   - The lockfile contains a list of sources, with each source entry key being the path to the source in this capsule repo.
   - Developers _can_ edit the included sources, such as to quickly test a bug fix during production. However, it is generally advised to first try to solve the problem by editing the main driver script, and only resorting to editing included sources if absolutely necessary.
 - **app panel**: `.codeocean/app-panel.json` defines a GUI for Code Ocean containing named parameters. Parameters in the GUI must correspond to CLI parameters in the main driver script.
+  - If a CLI parameter is given to a function from a package, make sure the description of the parameter in the app panel resembles the description in the package function. In many cases, the app panel parameter description can be identical to the package function parameter description, however package-specific jargon must be removed so that the app panel parameter description is appropriate for the context.
 - **Code Ocean run script**: `code/run` gathers the user parameters from the app panel and forwards them to the main driver script. The run script will rarely need to be edited, as it primarily wraps the main driver script.
 - The following files should only be edited directly on Code Ocean, never by hand:
   - `environment/Dockerfile`
@@ -77,7 +78,7 @@ default template files will need to be translated and adapted for the developer'
   and any irrelevant checklist items should be crossed out (~strikeout~).
 - If the PR contains any code or other content that was generated with AI assistance,
   including AI assistance for opening the PR itself, the PR should be labeled `AI-assisted`.
-  In the PR description under the heading "Generative AI Usage Disclosure",
+  In the PR description, uncomment the heading "Generative AI Usage Statement" and
   add a brief, concise statement of how AI was used in creating the PR (model used, high-level prompt intent, manual review confirmation, etc.).
 - When new features, bug fixes, or other behavioral changes are introduced to the code,
   unit tests must be added or updated to cover the new or changed functionality.
