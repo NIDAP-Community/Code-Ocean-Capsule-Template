@@ -76,10 +76,12 @@ default template files will need to be translated and adapted for the developer'
 - Do not allow the developer to proceed with opening a PR without filling out all sections of the template.
 - Before a PR can be moved from draft to "ready for review", all of the relevant checklist items under "PR Checklist" must be checked,
   and any irrelevant checklist items should be crossed out (~strikeout~).
-- If the PR contains any code or other content that was generated with AI assistance,
-  including AI assistance for opening the PR itself, the PR should be labeled `AI-assisted`.
-  In the PR description, uncomment the heading "Generative AI Usage Statement" and
-  add a brief, concise statement of how AI was used in creating the PR (model used, high-level prompt intent, manual review confirmation, etc.).
+- If the PR contains any code or other content that was generated with AI
+  assistance, including AI assistance for opening the PR itself, the PR should
+  be labeled `AI-assisted`. In the PR description, uncomment the heading
+  "Generative AI Usage Statement" and add a brief, concise statement of how AI
+  was used in creating the PR (model used, high-level prompt intent, manual
+  review confirmation, etc.).
 - When new features, bug fixes, or other behavioral changes are introduced to the code,
   unit tests must be added or updated to cover the new or changed functionality.
 - If there are any API or other user-facing changes, the documentation must be updated via inline roxygen comments.
